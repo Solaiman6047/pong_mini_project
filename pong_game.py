@@ -4,8 +4,8 @@ def ball_movement():
     x=ball.xcor()
     ball.setx(x+ball.dx)
     ball.sety(y+ball.dy)
-    
-# bouncing the ball against the wall  
+
+ #bouncing the ball against the wall  
 def ball_bouncing():
     if ball.ycor() > 290:
         ball.sety(290)
@@ -28,6 +28,8 @@ def ball_and_paddle():
     if (ball.xcor() < -340 and ball.xcor() > -350) and (ball.ycor() < paddle_a.ycor() + 40 and ball.ycor() > paddle_a.ycor() -40):
         ball.setx(-340)
         ball.dx *= -1
+def move_ball():
+    ball.forward(10)
     
 #function to move padel_a up
 def paddle_a_up():
@@ -40,8 +42,35 @@ def paddle_a_down():
     y=paddle_a.ycor()
     y-=20
     paddle_a.sety(y)
-    
-    
+
+#function to move padel_b up
+def paddle_b_up():
+    y=paddle_b.ycor()
+    y+=8
+    paddle_b.sety(y)
+
+#function to move padel_b down
+def paddle_b_down():
+    y=paddle_b.ycor()
+    y-=8
+    paddle_b.sety(y)
+
+#ai implementation
+def calculate_ball_trajectory():
+    width=800
+    initial_ball_pos=ball.pos()
+    initial_ball_angle=ball.heading()
+    ball.setheading(ball.heading()%360)
+    if ball.heading()<90 or ball.heading>270:
+        while ball.xcor()<width//2-75:
+            ball_movement()
+            move_ball()
+            ball_bouncing()
+    x,y=ball.pos()
+    ball.setpos(initial_ball_pos)
+    ball.setheading(initial_ball_angle)
+    return x,y
+
 import turtle
 import time
 
@@ -51,6 +80,7 @@ wn.bgcolor("blue")
 wn.title("PONG GAME")
 wn.setup(width=800, height=600)
 wn.tracer(0)
+
 
 # paddle_a
 paddle_a = turtle.Turtle()
@@ -88,11 +118,22 @@ wn.onkeypress(paddle_a_up,"Up")
 wn.listen()
 wn.onkeypress(paddle_a_down,"Down")
 
+#ai movement
+def ai_movement():
+    offset=10
+    if ball.heading()<90 or ball.heading()>270:
+        target_y=calculate_ball_trajectory()[-1]
+        if target_y>paddle_b.ycor()+offset:
+            paddle_b.sety(paddle_b.ycor()+5)
+        elif target_y<paddle_b.ycor()+offset:
+            paddle_b.sety(paddle_b.ycor()-5)
+
 # Main game loop
 while True:
+    calculate_ball_trajectory()
+    ai_movement()
     ball_movement()
     ball_bouncing()
     ball_and_paddle()
     wn.update()  
     time.sleep(0.01)  
-    
