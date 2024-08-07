@@ -1,3 +1,18 @@
+import turtle
+import time
+# Score variables
+score_1 = 0
+score_2 = 0
+winning_score=5
+
+# Scoring system
+pen = turtle.Turtle()
+pen.speed(0)
+pen.color('red')
+pen.penup()
+pen.hideturtle()
+pen.goto(0, 260)
+pen.write("You: 0  Computer: 0", align='center', font=('courier', 24, 'normal'))
 #function to move the ball
 def ball_movement():
     y=ball.ycor()
